@@ -28,7 +28,7 @@ public class employeeNotFoundException implements employeeDao {
     }
 
     public List<employee> findAll() {
-        String sql = "select * from employee";
+        String sql = "select * from employees";
         List<employee> employees = new ArrayList<>();
         try (Connection con = dbConnectionUtil.getConnection();
                 PreparedStatement pst = con.prepareStatement(sql)) {
@@ -51,7 +51,7 @@ public class employeeNotFoundException implements employeeDao {
     }
 
     public employee findById(int id) {
-        String sql = "select * from employee where id=?";
+        String sql = "select * from employees where id=?";
         employee emp = new employee();
         try (Connection con = dbConnectionUtil.getConnection();
                 PreparedStatement pst = con.prepareStatement(sql)) {
@@ -73,11 +73,25 @@ public class employeeNotFoundException implements employeeDao {
     }
 
     public void update(employee employee) {
+        String sql = "update from employees set name=?,department=?,salary=? where id=?";
+        employee emp = new employee();
+        try (Connection con = dbConnectionUtil.getConnection();
+                PreparedStatement pst = con.prepareStatement(sql)) {
+            pst.setString(1, employee.getName());
+            pst.setString(2, employee.getDepartment());
+            pst.setDouble(3, employee.getSalary());
+            pst.setInt(4, employee.getId());
+
+            pst.executeUpdate();
+            System.out.println("updated successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
     public void deleteById(int id) {
-        String sql = "delete from employee where id=?";
+        String sql = "delete from employees where id=?";
         try (Connection con = dbConnectionUtil.getConnection();
                 PreparedStatement pst = con.prepareStatement(sql)) {
             pst.setInt(1, id);
