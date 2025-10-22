@@ -1,3 +1,5 @@
+package com.codegnan.model;
+
 public class employee {
     // Fields
     private int id;
@@ -6,7 +8,11 @@ public class employee {
     private double salary;
 
     // Constructor
-    public Employee(int id, String name, String department, double salary) {
+    public employee() {
+
+    };
+
+    public employee(int id, String name, String department, double salary) {
         this.id = id;
         this.name = name;
         this.department = department;
