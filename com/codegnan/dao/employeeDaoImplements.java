@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.codegnan.dao.employeeDao;
+import com.codegnan.exceptions.employeeNotFoundException;
 import com.codegnan.model.employee;
 import com.codegnan.util.dbConnectionUtil;
 
@@ -34,6 +34,7 @@ public class employeeDaoImplements implements employeeDao {
                 PreparedStatement pst = con.prepareStatement(sql)) {
 
             ResultSet res = pst.executeQuery();
+
             while (res.next()) {
                 employee emp = new employee();
                 emp.setId(res.getInt(1));
@@ -50,7 +51,7 @@ public class employeeDaoImplements implements employeeDao {
         return employees;
     }
 
-    public employee findById(int id) {
+    public employee findById(int id) throws employeeNotFoundException {
         String sql = "select * from employees where id=?";
         employee emp = new employee();
         try (Connection con = dbConnectionUtil.getConnection();
@@ -63,6 +64,8 @@ public class employeeDaoImplements implements employeeDao {
                 emp.setDepartment(res.getString(3));
                 emp.setSalary(res.getDouble(4));
 
+            } else {
+                throw new employeeNotFoundException("id not found " + id);
             }
 
         } catch (SQLException e) {
@@ -72,8 +75,8 @@ public class employeeDaoImplements implements employeeDao {
 
     }
 
-    public void update(employee employee) {
-        String sql = "update from employees set name=?,department=?,salary=? where id=?";
+    public void update(employee employee) throws employeeNotFoundException {
+        String sql = "update employees set name=?,department=?,salary=? where id=?";
         try (Connection con = dbConnectionUtil.getConnection();
                 PreparedStatement pst = con.prepareStatement(sql)) {
             pst.setString(1, employee.getName());
@@ -81,21 +84,30 @@ public class employeeDaoImplements implements employeeDao {
             pst.setDouble(3, employee.getSalary());
             pst.setInt(4, employee.getId());
 
-            pst.executeUpdate();
-            System.out.println("updated successfully");
+            int rowsAffected = pst.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("updated successfully:" + employee.getId() + "\t" + employee.getName() + "\t"
+                        + employee.getDepartment() + "\t" + employee.getSalary());
+            } else {
+                throw new employeeNotFoundException("id not found " + employee.getId());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
     }
 
-    public void deleteById(int id) {
+    public void deleteById(int id) throws employeeNotFoundException {
         String sql = "delete from employees where id=?";
         try (Connection con = dbConnectionUtil.getConnection();
                 PreparedStatement pst = con.prepareStatement(sql)) {
             pst.setInt(1, id);
-            pst.executeUpdate();
-            System.out.println("employee with id " + id + " has been deleted successfully");
+            int rowsAffected = pst.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("employee with id " + id + " has been deleted successfully");
+            } else {
+                throw new employeeNotFoundException("id not found " + id);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
