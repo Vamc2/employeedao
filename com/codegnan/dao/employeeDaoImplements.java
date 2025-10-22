@@ -1,4 +1,4 @@
-package com.codegnan.exceptions;
+package com.codegnan.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +10,7 @@ import com.codegnan.dao.employeeDao;
 import com.codegnan.model.employee;
 import com.codegnan.util.dbConnectionUtil;
 
-public class employeeNotFoundException implements employeeDao {
+public class employeeDaoImplements implements employeeDao {
     public void save(employee employee) {
         String sql = "insert into employees(id,name,department,salary) values(?,?,?,?)";
         try (Connection con = dbConnectionUtil.getConnection();
